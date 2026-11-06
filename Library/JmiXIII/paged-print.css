@@ -1,0 +1,277 @@
+/* =====================================================================
+   Paged Print — print layout stylesheet (Paged.js)
+   Part of Library/JmiXIII/PagedPrint — MIT License
+   Customise colours/fonts by overriding the --pp-* variables in your own
+   stylesheet (config option `extraCss`), e.g.
+     :root { --pp-primary: #0a3d62; --pp-accent: #f2a900; }
+   ===================================================================== */
+
+:root {
+  --pp-primary: #1f3a5f;        /* titles, borders, header text */
+  --pp-accent: #c9a227;         /* header underline, h1 underline */
+  --pp-muted: #6b7280;          /* footer text */
+  --pp-border: #9aa5b1;         /* table borders */
+  --pp-header-bg: #eef2f7;      /* label cells background */
+  --pp-row-alt: #f6f8fb;        /* zebra rows */
+  --pp-text: #1f2937;
+  --pp-watermark-color: rgba(200, 30, 30, 0.12);
+  --pp-font: "Segoe UI", Calibri, Arial, "Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", sans-serif;
+  --pp-mono: Consolas, "Courier New", monospace;
+  --pp-page-label: "Page";      /* set by the command from config `pageLabel` */
+}
+
+body {
+  font-family: var(--pp-font);
+  color: var(--pp-text);
+}
+
+/* ---------- Page ----------------------------------------------------
+   Page SIZE (A4 portrait / landscape…) is set by the command from the
+   front matter — do NOT declare `size` here (two declarations conflict
+   in Paged.js). */
+@page {
+  margin: 40mm 15mm 20mm 15mm;
+
+  @top-center {
+    content: element(ppHeader);
+    vertical-align: bottom;
+    padding-bottom: 4mm;
+  }
+  @bottom-left {
+    content: element(ppFooter);
+    vertical-align: top;
+    padding-top: 3mm;
+  }
+  @bottom-right {
+    content: var(--pp-page-label) " " counter(page) " / " counter(pages);
+    vertical-align: top;
+    padding-top: 3mm;
+    font-family: var(--pp-font);
+    font-size: 8pt;
+    color: var(--pp-muted);
+  }
+}
+
+/* Header spans the full width of the top margin */
+.pagedjs_margin-top {
+  grid-template-columns: 0 1fr 0 !important;
+}
+.pagedjs_margin-top-center .pagedjs_margin-content {
+  width: 100%;
+}
+
+/* ---------- Running header (repeated on every page) ----------------- */
+.pp-header {
+  position: running(ppHeader);
+  width: 100%;
+  font-family: var(--pp-font);
+  color: var(--pp-primary);
+}
+.pp-header-grid {
+  width: 100%;
+  table-layout: fixed;
+  border-collapse: collapse;
+  border: 0.4mm solid var(--pp-primary);
+  border-bottom: 1.2mm solid var(--pp-accent);
+}
+.pp-header-grid > tbody > tr > td {
+  vertical-align: middle;
+  padding: 0;
+}
+.pp-logo {
+  width: 38mm;
+  padding: 2mm !important;
+  text-align: center;
+  border-right: 0.4mm solid var(--pp-primary);
+}
+.pp-logo img {
+  max-width: 100%;
+  max-height: 16mm;
+}
+.pp-title {
+  padding: 2mm 4mm !important;
+  font-size: 13pt;
+  font-weight: 700;
+  text-align: center;
+}
+.pp-info {
+  width: 66mm;
+  border-left: 0.4mm solid var(--pp-primary);
+}
+.pp-info table {
+  border-collapse: collapse;
+  width: 100%;
+  font-size: 8pt;
+}
+.pp-info th,
+.pp-info td {
+  padding: 0.8mm 2mm;
+  border-bottom: 0.2mm solid var(--pp-border);
+  text-align: left;
+}
+.pp-info tr:last-child th,
+.pp-info tr:last-child td {
+  border-bottom: none;
+}
+.pp-info th {
+  width: 40%;
+  font-weight: 600;
+  background: var(--pp-header-bg);
+}
+
+/* ---------- Running footer ------------------------------------------ */
+.pp-footer {
+  position: running(ppFooter);
+  font-family: var(--pp-font);
+  font-size: 8pt;
+  color: var(--pp-muted);
+}
+.pp-note {
+  font-weight: 600;
+  color: var(--pp-primary);
+}
+
+/* ---------- Optional first-page info table -------------------------- */
+.pp-info-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 0 0 8mm 0;
+  font-size: 9pt;
+  break-inside: avoid;
+}
+.pp-info-table th,
+.pp-info-table td {
+  border: 0.3mm solid var(--pp-border);
+  padding: 1.5mm 2.5mm;
+  text-align: left;
+  vertical-align: top;
+}
+.pp-info-table th {
+  width: 30%;
+  background: var(--pp-header-bg);
+  color: var(--pp-primary);
+  font-weight: 600;
+}
+
+/* ---------- Content ------------------------------------------------- */
+.pp-content {
+  font-family: var(--pp-font);
+  font-size: 10pt;
+  line-height: 1.4;
+  color: var(--pp-text);
+}
+.pp-content h1, .pp-content h2, .pp-content h3, .pp-content h4 {
+  color: var(--pp-primary);
+  break-after: avoid;
+}
+.pp-content h1 { font-size: 16pt; border-bottom: 0.6mm solid var(--pp-accent); padding-bottom: 1mm; }
+.pp-content h2 { font-size: 13pt; }
+.pp-content h3 { font-size: 11pt; }
+.pp-content a { color: var(--pp-primary); text-decoration: none; }
+.pp-content img { max-width: 100%; }
+
+/* Tables stay in the flow; their header row never sits alone at the
+   bottom of a page and is repeated on following pages (paged-print-tables.js) */
+.pp-content table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 3mm 0;
+  font-size: 8pt;
+}
+.pp-content th,
+.pp-content td {
+  border: 0.3mm solid var(--pp-border);
+  padding: 1.2mm 1.8mm;
+  vertical-align: top;
+  text-align: left;
+}
+.pp-content thead th,
+.pp-content tr:first-child th {
+  background: var(--pp-primary);
+  color: #fff;
+  font-weight: 600;
+}
+.pp-content tr {
+  break-inside: avoid;
+}
+.pp-content thead {
+  break-inside: avoid;
+  break-after: avoid;
+}
+.pp-content tbody tr:nth-child(even) td {
+  background: var(--pp-row-alt);
+}
+.pp-content pre, .pp-content code {
+  font-family: var(--pp-mono);
+  font-size: 8.5pt;
+}
+.pp-content pre {
+  background: #f3f4f6;
+  padding: 2mm;
+  white-space: pre-wrap;
+}
+
+/* ---------- Watermark (from the document status) -------------------- */
+body.pp-watermark .pagedjs_page {
+  position: relative;
+}
+body.pp-watermark .pagedjs_page::after {
+  content: var(--pp-watermark);
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(-35deg);
+  font-family: var(--pp-font);
+  font-size: 80pt;
+  font-weight: 800;
+  letter-spacing: 4mm;
+  color: var(--pp-watermark-color);
+  white-space: nowrap;
+  pointer-events: none;
+  z-index: 10;
+}
+
+/* ---------- On-screen preview --------------------------------------- */
+@media screen {
+  body {
+    background: #d1d5db;
+    margin: 0;
+  }
+  .pagedjs_pages {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 18mm 0 10mm 0;
+  }
+  .pagedjs_page {
+    background: #fff;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.25);
+    margin-bottom: 8mm;
+  }
+  .pp-toolbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    display: flex;
+    gap: 4mm;
+    align-items: center;
+    padding: 2.5mm 5mm;
+    background: var(--pp-primary);
+    color: #fff;
+    font-family: var(--pp-font);
+    font-size: 10pt;
+  }
+  .pp-toolbar button {
+    background: var(--pp-accent);
+    color: var(--pp-primary);
+    border: none;
+    padding: 1.5mm 4mm;
+    font-weight: 700;
+    cursor: pointer;
+  }
+}
+@media print {
+  .pp-toolbar { display: none !important; }
+}
