@@ -110,8 +110,6 @@ orientation: landscape
 Configuration:
 ```lua
 config.set("pagedPrint", {
-  fields = { title = "title", status = "status", orientation = "orientation" },
-  landscapeValues = { "landscape" },
   header = {
     { field = "id",         label = "Ref." },
     { field = "site",       label = "Sites" },
@@ -130,7 +128,7 @@ config.set("pagedPrint", {
   toolbarHint = "Destination: Save as PDF — untick “Headers and footers”",
 })
 ```
-Every label and field name can be translated: e.g. `fields = { title = "titre", status = "statut" }`, `landscapeValues = { "paysage" }`, `lang = "fr", locale = "fr-FR"`.
+`title`, `status` and `orientation` are read from the default field names. If your documents use other names (or another language), map them with `fields` and `landscapeValues`, e.g. `fields = { title = "titre", status = "statut" }`, `landscapeValues = { "paysage" }`. Every label can be translated too (`lang = "fr", locale = "fr-FR"`…).
 
 ## Files
 * `paged-print.css` — base print layout.
