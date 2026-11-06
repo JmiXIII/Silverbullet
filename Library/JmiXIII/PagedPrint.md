@@ -94,29 +94,43 @@ The base stylesheet uses CSS variables. Create your own stylesheet (anywhere in 
 ```
 Do not declare `@page { size: … }` in your stylesheet: the page size is set by the command.
 
-### Example: French quality documents
+### Example: quality documents
+Front matter of a controlled document:
+```yaml
+---
+title: Hazardous waste management
+id: PROC-042
+site: [Plant A, Plant B]
+issue_date: "2026-11-06"
+issued_by: J. Smith
+status: draft
+orientation: landscape
+---
+```
+Configuration:
 ```lua
 config.set("pagedPrint", {
-  fields = { title = "titre", status = "statut", orientation = "orientation" },
-  landscapeValues = { "paysage", "landscape" },
+  fields = { title = "title", status = "status", orientation = "orientation" },
+  landscapeValues = { "landscape" },
   header = {
-    { field = "id",             label = "Réf." },
-    { field = "site",           label = "Sites" },
-    { field = "date_diffusion", label = "Diffusé le" },
-    { field = "diffuse_par",    label = "Diffusé par" },
-    { field = "statut",         label = "Statut" },
+    { field = "id",         label = "Ref." },
+    { field = "site",       label = "Sites" },
+    { field = "issue_date", label = "Issued on" },
+    { field = "issued_by",  label = "Issued by" },
+    { field = "status",     label = "Status" },
   },
   logo = "Assets/logo.png",
-  extraCss = "Assets/charte-impression.css",
-  footerNote = "Document non maîtrisé une fois imprimé",
-  printedOnLabel = "Édité le",
-  watermarks = { brouillon = "BROUILLON" },
-  fileName = "{id} - {date_diffusion} - {titre}",
-  lang = "fr", locale = "fr-FR",
-  toolbarButton = "Imprimer / PDF",
-  toolbarHint = "Destination : Enregistrer au format PDF — décocher « En-têtes et pieds de page »",
+  extraCss = "Assets/print-branding.css",
+  footerNote = "Uncontrolled copy when printed",
+  printedOnLabel = "Printed on",
+  watermarks = { draft = "DRAFT", obsolete = "OBSOLETE" },
+  fileName = "{id} - {issue_date} - {title}",
+  lang = "en", locale = "en-GB",
+  toolbarButton = "Print / PDF",
+  toolbarHint = "Destination: Save as PDF — untick “Headers and footers”",
 })
 ```
+Every label and field name can be translated: e.g. `fields = { title = "titre", status = "statut" }`, `landscapeValues = { "paysage" }`, `lang = "fr", locale = "fr-FR"`.
 
 ## Files
 * `paged-print.css` — base print layout.
